@@ -1,10 +1,17 @@
+/*
+ * This program has been developed by students from the bachelor
+ * Computer Science at Utrecht University within the Software Project course.
+ *
+ * © Copyright Utrecht University
+ * (Department of Information and Computing Sciences)
+ */
+
 import { AmqpConfig, createAmqpSocket } from "./amqp";
 import { createRoutingKeyStore } from "./routingKeyStore";
 import { panic } from "./utils";
 
-
 async function main() {
-  let addonId = process.env.ADDON_ID ?? panic("ADDON_ID not set");
+  const addonId = process.env.ADDON_ID ?? panic("ADDON_ID not set");
 
   const amqpConfig: AmqpConfig = {
     queue: {
@@ -19,13 +26,13 @@ async function main() {
     },
 
     successType: `ml_service_result`,
-    errorType: `ml_service_error`,
+    errorType: `ml_service_error`
   };
 
-  let routingKeyStore = await createRoutingKeyStore();
-  let amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
+  const routingKeyStore = await createRoutingKeyStore();
+  const amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
 
-  amqpSocket.handle("", async (data) => {
+  amqpSocket.handle("", async data => {
     return await fetch("http://ml-addon-service:3000", {
       method: "POST",
       headers: {
@@ -38,8 +45,7 @@ async function main() {
   amqpSocket.listen();
 }
 
-
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
   process.exit(1);
 });
