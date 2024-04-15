@@ -1,0 +1,29 @@
+{
+  "name": "ml-addon-adapter",
+  "version": "1.0.0",
+  "description": "Adapter for connecting ML addons to the amqp network",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node -r ts-node/register -r dotenv/config src/index.ts",
+    "start": "node build/index.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky || echo \"Skipping husky in production\""
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^20.12.7",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.6.0"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "dotenv": "^16.4.5",
+    "husky": "^9.0.11",
+    "promise-socket": "^7.0.0",
+    "redis": "^4.6.13"
+  }
+}
