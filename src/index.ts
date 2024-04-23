@@ -26,22 +26,27 @@ async function main() {
     },
 
     successType: `ml_service_result`,
-    errorType: `ml_service_error`
+    errorType: `ml_service_error`,
+    bodyMapper: message => {
+      return JSON.parse(message.content.toString());
+    }
   };
 
   const routingKeyStore = await createRoutingKeyStore();
   const amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
 
-  amqpSocket.handle("", async data => {
-    return await fetch("http://ml-addon-service:3000", {
+  amqpSocket.handle("__default", async data => {  
+    const result = await fetch("http://localhost:8800", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
-    });
+    })
+    return await result.json();
   });
-
+  
+  console.log("Listening for messages...");
   amqpSocket.listen();
 }
 

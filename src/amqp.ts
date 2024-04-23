@@ -6,7 +6,7 @@
  * (Department of Information and Computing Sciences)
  */
 
-import amqp from "amqplib";
+import amqp, { ConsumeMessage } from "amqplib";
 
 import { RoutingKeyStore } from "./routingKeyStore";
 import { panic } from "./utils";
@@ -43,7 +43,8 @@ export interface AmqpConfig {
     request: string;
   };
   successType: string;
-  errorType: string;
+  errorType: string;  
+  bodyMapper: (message: ConsumeMessage) => AmqpRequestData;
 }
 
 interface AmqpResponse {
@@ -98,7 +99,7 @@ interface PublishContext {
 }
 
 interface AmqpRequestData {
-  action: string;
+  action?: string;
 }
 
 export class AmqpSocket {
@@ -185,12 +186,11 @@ export class AmqpSocket {
         return;
       }
       this.channel.ack(message);
+      console.log("Received message:", message);
 
-      const content = JSON.parse(message.content.toString()) as AmqpRequest;
-      const body: AmqpRequestData = JSON.parse(content.fromFrontend.body);
-      const sessionId = content.sessionData.sessionID;
-
-      console.log("Received message:", content);
+      const headerContent = JSON.parse(message.properties.headers?.message.toString()) as AmqpRequest;
+      const body: AmqpRequestData = this.config.bodyMapper(message);
+      const sessionId = headerContent.sessionData.sessionID;
 
       const routingKey = await this.routingKeyStore.get(sessionId);
 
@@ -203,14 +203,15 @@ export class AmqpSocket {
 
       const ctx: PublishContext = {
         routingKey: routingKey,
-        callID: content.fromFrontend.callID,
+        callID: headerContent.fromFrontend.callID,
         headers: message.properties.headers
       };
 
-      if (body.action == null && !("" in this.handlers)) {
+      if (body.action == null && !("__default" in this.handlers)) {
         this.publishError(ctx, "No action specified");
         return;
       }
+      body.action = "__default";
 
       if (!(body.action in this.handlers)) {
         this.publishError(ctx, `Action "${body.action}" doesn't exist`);
@@ -219,7 +220,7 @@ export class AmqpSocket {
 
       const handler = this.handlers[body.action ?? ""];
       try {
-        const response = await handler(body, content.sessionData);
+        const response = await handler(body, headerContent.sessionData);
         this.publishSuccess(ctx, response);
       } catch (error) {
         // TODO: proper errors
