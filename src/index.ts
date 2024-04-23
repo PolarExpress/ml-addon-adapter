@@ -35,17 +35,17 @@ async function main() {
   const routingKeyStore = await createRoutingKeyStore();
   const amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
 
-  amqpSocket.handle("__default", async data => {  
+  amqpSocket.handle("__default", async data => {
     const result = await fetch("http://localhost:8800", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
-    })
+    });
     return await result.json();
   });
-  
+
   console.log("Listening for messages...");
   amqpSocket.listen();
 }

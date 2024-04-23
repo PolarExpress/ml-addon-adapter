@@ -43,7 +43,7 @@ export interface AmqpConfig {
     request: string;
   };
   successType: string;
-  errorType: string;  
+  errorType: string;
   bodyMapper: (message: ConsumeMessage) => AmqpRequestData;
 }
 
@@ -188,7 +188,9 @@ export class AmqpSocket {
       this.channel.ack(message);
       console.log("Received message:", message);
 
-      const headerContent = JSON.parse(message.properties.headers?.message.toString()) as AmqpRequest;
+      const headerContent = JSON.parse(
+        message.properties.headers?.message.toString()
+      ) as AmqpRequest;
       const body: AmqpRequestData = this.config.bodyMapper(message);
       const sessionId = headerContent.sessionData.sessionID;
 
