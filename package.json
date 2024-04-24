@@ -24,6 +24,7 @@
     "dotenv": "^16.4.5",
     "husky": "^9.0.11",
     "promise-socket": "^7.0.0",
-    "redis": "^4.6.13"
+    "redis": "^4.6.13",
+    "ts-amqp-socket": "github:PolarExpress/ts-amqp-socket"
   }
 }

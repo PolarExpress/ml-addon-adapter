@@ -6,8 +6,7 @@
  * (Department of Information and Computing Sciences)
  */
 
-import { AmqpConfig, createAmqpSocket } from "./amqp";
-import { createRoutingKeyStore } from "./routingKeyStore";
+import { AmqpConfig, createAmqpSocket, createRoutingKeyStore } from "ts-amqp-socket";
 import { panic } from "./utils";
 
 async function main() {
@@ -36,7 +35,7 @@ async function main() {
   const routingKeyStore = await createRoutingKeyStore();
   const amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
 
-  amqpSocket.handle("__default", async data => {
+  amqpSocket.handle("__default", async (data: object) => {
     const result = await fetch(`http://ml-${addonId}-service:${addonPort}`, {
       method: "POST",
       headers: {
