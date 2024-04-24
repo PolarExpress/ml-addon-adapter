@@ -50,7 +50,7 @@ export interface AmqpConfig {
 interface AmqpResponse {
   value: unknown;
   type: string;
-  callID: string;  
+  callID: string;
 }
 interface AmqpRequest {
   sessionData: SessionData;
@@ -136,15 +136,11 @@ export class AmqpSocket {
    * @param type The type of the message (used for type-based callbacks in the frontend)
    * @param status The status of the message (e.g. success, error, ...)
    */
-  private publish(
-    context: PublishContext,
-    response: unknown,
-    type: string,    
-  ) {
+  private publish(context: PublishContext, response: unknown, type: string) {
     const responseMessage: AmqpResponse = {
       value: response,
       type: type,
-      callID: context.callID,      
+      callID: context.callID
     };
 
     this.channel.publish(
