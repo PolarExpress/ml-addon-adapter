@@ -5,12 +5,12 @@ FROM node:21-bookworm AS base
 FROM base AS dependencies
 
 WORKDIR /deps/dev
-COPY package.json ./
-RUN npm install
+COPY package-lock.json package.json ./
+RUN npm ci
 
 WORKDIR /deps/prod
-COPY package.json ./
-RUN npm install --prod
+COPY package-lock.json package.json ./
+RUN npm ci --prod
 
 # ------------------------------------------------------------------------------
 
