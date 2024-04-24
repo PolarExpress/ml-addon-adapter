@@ -32,4 +32,4 @@ COPY --from=build /app/build ./build
 COPY --from=dependencies /deps/prod/node_modules ./node_modules
 
 ENV NODE_ENV=production
-ENTRYPOINT ["node", "./build/src/index.js"]
+ENTRYPOINT ["node", "./build/index.js"]

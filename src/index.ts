@@ -12,6 +12,7 @@ import { panic } from "./utils";
 
 async function main() {
   const addonId = process.env.ADDON_ID ?? panic("ADDON_ID not set");
+  const addonPort = process.env.ADDON_PORT ?? 8800;
 
   const amqpConfig: AmqpConfig = {
     queue: {
@@ -25,7 +26,7 @@ async function main() {
       request: `ml-${addonId}-request`
     },
 
-    successType: `ml_service_result`,
+    successType: `${addonId}`,
     errorType: `ml_service_error`,
     bodyMapper: message => {
       return JSON.parse(message.content.toString());
@@ -36,13 +37,16 @@ async function main() {
   const amqpSocket = await createAmqpSocket(amqpConfig, routingKeyStore);
 
   amqpSocket.handle("__default", async data => {
-    const result = await fetch("http://localhost:8800", {
+    const result = await fetch(`http://ml-${addonId}-service:${addonPort}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     });
+    if (!result.ok) {
+      throw new Error(await result.text());
+    }
     return await result.json();
   });
 

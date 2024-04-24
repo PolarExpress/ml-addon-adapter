@@ -50,8 +50,7 @@ export interface AmqpConfig {
 interface AmqpResponse {
   value: unknown;
   type: string;
-  callID: string;
-  status: string;
+  callID: string;  
 }
 interface AmqpRequest {
   sessionData: SessionData;
@@ -140,14 +139,12 @@ export class AmqpSocket {
   private publish(
     context: PublishContext,
     response: unknown,
-    type: string,
-    status: string
+    type: string,    
   ) {
     const responseMessage: AmqpResponse = {
       value: response,
       type: type,
-      callID: context.callID,
-      status: status
+      callID: context.callID,      
     };
 
     this.channel.publish(
@@ -164,7 +161,7 @@ export class AmqpSocket {
    * @param response The response to send to the frontend
    */
   private publishSuccess(context: PublishContext, response: unknown) {
-    this.publish(context, response, this.config.successType, "success");
+    this.publish(context, response, this.config.successType);
   }
 
   /**
@@ -173,7 +170,7 @@ export class AmqpSocket {
    * @param error The error message to send to the frontend
    */
   private publishError(context: PublishContext, error: string) {
-    this.publish(context, { error: error }, this.config.errorType, "error");
+    this.publish(context, { error: error }, this.config.errorType);
   }
 
   /**
