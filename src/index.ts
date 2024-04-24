@@ -6,7 +6,11 @@
  * (Department of Information and Computing Sciences)
  */
 
-import { AmqpConfig, createAmqpSocket, createRoutingKeyStore } from "ts-amqp-socket";
+import {
+  AmqpConfig,
+  createAmqpSocket,
+  createRoutingKeyStore
+} from "ts-amqp-socket";
 import { panic } from "./utils";
 
 async function main() {
