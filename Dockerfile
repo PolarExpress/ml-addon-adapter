@@ -1,16 +1,17 @@
 FROM node:21-bookworm AS base
 
+RUN npm install -g pnpm
 # ------------------------------------------------------------------------------
 
 FROM base AS dependencies
 
 WORKDIR /deps/dev
-COPY package-lock.json package.json ./
-RUN npm ci
+COPY package.json ./
+RUN pnpm i
 
 WORKDIR /deps/prod
-COPY package-lock.json package.json ./
-RUN npm ci --prod
+COPY package.json ./
+RUN pnpm i --prod
 
 # ------------------------------------------------------------------------------
 

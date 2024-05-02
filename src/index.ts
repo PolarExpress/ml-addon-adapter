@@ -29,7 +29,7 @@ async function main() {
       request: `ml-${addonId}-request`
     },
 
-    successType: `${addonId}`,
+    successType: `ml_result`,
     errorType: `ml_service_error`,
     bodyMapper: message => {
       return JSON.parse(message.content.toString());
@@ -50,7 +50,10 @@ async function main() {
     if (!result.ok) {
       throw new Error(await result.text());
     }
-    return await result.json();
+    return {
+      type: addonId,
+      result: await result.json()
+    }
   });
 
   console.log("Listening for messages...");
