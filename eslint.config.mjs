@@ -75,6 +75,9 @@ export default tseslint.config(
   ),
   {
     rules: {
+      "perfectionist/sort-interfaces": "off",
+      "perfectionist/sort-objects": "off",
+      "perfectionist/sort-object-types": "off",
       "unicorn/filename-case": [
         "error",
         {
