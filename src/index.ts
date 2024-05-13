@@ -50,7 +50,7 @@ async function main() {
     if (!result.ok) {
       throw new Error(await result.text());
     }
-    return { addonId, result: await result.json() };    
+    return { addonId, result: await result.json() };
   });
 
   console.log("Listening for messages...");
