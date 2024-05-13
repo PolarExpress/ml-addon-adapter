@@ -11,6 +11,7 @@ import {
   createAmqpSocket,
   createRoutingKeyStore
 } from "ts-amqp-socket";
+
 import { panic } from "./utils";
 
 async function main() {
@@ -18,22 +19,22 @@ async function main() {
   const addonPort = process.env.ADDON_PORT ?? 8800;
 
   const amqpConfig: AmqpConfig = {
-    queue: {
-      request: `ml-${addonId}-request-queue`
+    bodyMapper: message => {
+      return JSON.parse(message.content.toString());
     },
+    errorType: `ml_service_error`,
     exchange: {
       request: "ml-direct-exchange",
       response: "ui-direct-exchange"
     },
+
+    queue: {
+      request: `ml-${addonId}-request-queue`
+    },
     routingKey: {
       request: `ml-${addonId}-request`
     },
-
-    successType: `ml_result`,
-    errorType: `ml_service_error`,
-    bodyMapper: message => {
-      return JSON.parse(message.content.toString());
-    }
+    successType: `ml_result`
   };
 
   const routingKeyStore = await createRoutingKeyStore();
@@ -41,11 +42,11 @@ async function main() {
 
   amqpSocket.handle("__default", async (data: object) => {
     const result = await fetch(`http://ml-${addonId}-service:${addonPort}`, {
-      method: "POST",
+      body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(data)
+      method: "POST"
     });
     if (!result.ok) {
       throw new Error(await result.text());
@@ -57,7 +58,7 @@ async function main() {
   amqpSocket.listen();
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
+main().catch(error => {
+  console.error(error);
+  throw error;
 });
