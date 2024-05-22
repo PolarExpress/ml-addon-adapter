@@ -6,4 +6,4 @@
  * (Department of Information and Computing Sciences)
  */
 
-export { default } from "@graphpolaris/ts-configs/eslint";
+export { default } from "@graphpolaris/ts-configs/prettier";

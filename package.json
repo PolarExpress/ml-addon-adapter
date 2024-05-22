@@ -12,6 +12,7 @@
     "prepare": "husky || echo \"Skipping husky in production\""
   },
   "devDependencies": {
+    "@graphpolaris/ts-configs": "github:PolarExpress/ts-configs",
     "@types/amqplib": "^0.10.5",
     "@types/node": "^20.12.7",
     "eslint": "^8.57.0",
